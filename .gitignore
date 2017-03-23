@@ -1,0 +1,17 @@
+# Netbeans specific folders
+build/
+dist/
+nbproject/
+
+# Additional packages
+.jar
+.war
+.ear
+
+# Class files
+.class
+
+# Misc
+.txt
+build.xml
+manifest.mf
