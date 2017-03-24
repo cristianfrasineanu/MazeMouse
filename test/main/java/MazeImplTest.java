@@ -1,6 +1,5 @@
 package main.java;
 
-import java.io.FileNotFoundException;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import org.junit.After;
@@ -16,6 +15,7 @@ import static org.junit.Assert.*;
  */
 public class MazeImplTest {
 
+    private static final String TEST_FILE = "testIO.txt";
     MazeFactory mazeFactory;
     MazeReader mazeReader;
     MazeWriter mazeWriter;
@@ -34,12 +34,8 @@ public class MazeImplTest {
     @Before
     public void setUp() {
         this.mazeFactory = new MazeFactoryImpl();
-        this.mazeWriter = new MazeWriter("testIO.txt");
-        try {
-            this.mazeReader = new MazeReader("testIO.txt");
-        } catch (FileNotFoundException ex) {
-            System.out.println(ex.getMessage());
-        }
+        this.mazeWriter = new MazeWriter(MazeImplTest.TEST_FILE);
+        this.mazeReader = new MazeReader(MazeImplTest.TEST_FILE);
     }
 
     @After
@@ -72,7 +68,7 @@ public class MazeImplTest {
     @Test
     public void testReadWriteForOneMaze() {
         Maze initialMaze = this.mazeFactory.createMazeWithPath();
-        
+
         this.mazeWriter.writeMaze(initialMaze, false);
         Maze readMaze = this.mazeReader.readFirstMaze();
 

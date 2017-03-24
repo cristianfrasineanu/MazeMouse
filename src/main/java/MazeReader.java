@@ -21,12 +21,12 @@ public class MazeReader {
     private static final Logger LOG = Logger.getLogger(MazeReader.class.getName());
     private BufferedReader bufferedReader;
 
-    public MazeReader(String fileName) throws FileNotFoundException {
+    public MazeReader(String fileName) {
         this.filePath = MazeReader.RSC_PATH + fileName;
 
         File file = new File(filePath);
         if (!file.exists()) {
-            throw new FileNotFoundException("The file must be existing.");
+            LOG.log(Level.SEVERE, "Please firstly create the file to be read from.");
         }
     }
 

@@ -1,6 +1,7 @@
 package main.java;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -19,6 +20,15 @@ public class MazeWriter {
 
     public MazeWriter(String fileName) {
         this.filePath = MazeWriter.RSC_PATH + fileName;
+
+        File file = new File(filePath);
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException ex) {
+                LOG.log(Level.SEVERE, "Couldn't create the file: ", filePath);
+            }
+        }
     }
 
     public void writeList() {
