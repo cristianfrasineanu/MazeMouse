@@ -7,8 +7,6 @@ package main.java;
 public interface Maze {
 
     public void printCurrentPosition();
-
-    public void moveMouseToEntry();
     
     public Cell getCell(Coords cellCoordinates);
     

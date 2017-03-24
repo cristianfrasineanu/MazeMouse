@@ -12,6 +12,6 @@ nbproject/
 .class
 
 # Misc
-.txt
+*.txt
 build.xml
 manifest.mf

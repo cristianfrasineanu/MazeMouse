@@ -6,14 +6,14 @@ import java.util.Collections;
 class DepthFirstCarver implements MazeAlgorithm {
 
     private final Cell[][] cellNetwork;
-    private final Cell.possibleDirections[] possibleDirections;
+    private final Direction[] possibleDirections;
     private final Coords currentCoordinates;
     private final Coords exitCoordinates;
 
     public DepthFirstCarver(Cell[][] cellNetwork, Coords entryCoordinates, Coords exitCoordinates) {
         this.cellNetwork = cellNetwork;
-        this.possibleDirections = new Cell.possibleDirections[4];
-        System.arraycopy(Cell.possibleDirections.values(), 0, this.possibleDirections, 0, 4);
+        this.possibleDirections = new Direction[4];
+        System.arraycopy(Direction.values(), 0, this.possibleDirections, 0, 4);
 
         this.currentCoordinates = new Coords(entryCoordinates.x, entryCoordinates.y);
         this.exitCoordinates = exitCoordinates;
@@ -51,7 +51,7 @@ class DepthFirstCarver implements MazeAlgorithm {
     private void carve(Coords cell) {
         Collections.shuffle(Arrays.asList(this.possibleDirections));
 
-        for (Cell.possibleDirections direction : this.possibleDirections) {
+        for (Direction direction : this.possibleDirections) {
             Coords newCell = this.moveToDirection(cell, direction);
 
             if (this.checkIfFeasible(newCell)) {
@@ -61,15 +61,13 @@ class DepthFirstCarver implements MazeAlgorithm {
         }
     }
 
-    // A feasible point will never connect two already instantiated cells, we search for non-explored areas only.
-    // Additionally, we don't want to touch the margins of the maze either.
     private boolean checkIfFeasible(Coords cell) {
         if (cell.x == 0 || cell.x == this.cellNetwork.length - 1 || cell.y == 0 || cell.y == this.cellNetwork.length - 1) {
             return false;
         }
 
         int countTraversableNeighbours = 0;
-        for (Cell.possibleDirections direction : this.possibleDirections) {
+        for (Direction direction : this.possibleDirections) {
             Coords newCell = this.moveToDirection(cell, direction);
 
             if (this.cellNetwork[newCell.x][newCell.y].isTraversable()) {
@@ -80,7 +78,7 @@ class DepthFirstCarver implements MazeAlgorithm {
         return countTraversableNeighbours <= 1;
     }
 
-    private Coords moveToDirection(Coords cell, Cell.possibleDirections direction) {
+    private Coords moveToDirection(Coords cell, Direction direction) {
         Coords newCell = new Coords(cell.x, cell.y);
 
         switch (direction) {

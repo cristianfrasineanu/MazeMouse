@@ -49,7 +49,6 @@ public class MazeImplTest {
     @Test
     public void testMazeGenerationNoWalls() {
         Maze maze = this.mazeFactory.createTestMazeNoWalls();
-        maze.moveMouseToEntry();
 
         Cell cell = maze.getCell(maze.getEntryCoordinates());
         assertEquals(cell.getNumberOfExits(), 1);
@@ -63,8 +62,6 @@ public class MazeImplTest {
     @Test
     public void testMazeGenerationWithPath() {
         Maze maze = this.mazeFactory.createMazeWithPath();
-        maze.moveMouseToEntry();
-        maze.printCurrentPosition();
 
         JTextArea textArea = new JTextArea(maze.toString(), maze.getDimension(), maze.getDimension());
         JOptionPane.showMessageDialog(null, textArea, "Maze visual configuration", JOptionPane.INFORMATION_MESSAGE);
@@ -74,9 +71,8 @@ public class MazeImplTest {
 
     @Test
     public void testReadWriteForOneMaze() {
-        Maze initialMaze = this.mazeFactory.createTestMazeNoWalls();
-        initialMaze.moveMouseToEntry();
-
+        Maze initialMaze = this.mazeFactory.createMazeWithPath();
+        
         this.mazeWriter.writeMaze(initialMaze, false);
         Maze readMaze = this.mazeReader.readFirstMaze();
 

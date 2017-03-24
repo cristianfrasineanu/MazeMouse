@@ -10,7 +10,7 @@ public class Cell {
 
     public static String wallGlyph = Character.toString((char) 0x2589);
     public static String pathGlyph = Character.toString((char) 0x2504);
-    
+
     private boolean isTraversable;
     private int numberOfExits;
 
@@ -45,32 +45,4 @@ public class Cell {
         return numberOfExits;
     }
 
-    public static enum possibleDirections {
-        NORTH,
-        EAST,
-        SOUTH,
-        WEST;
-
-        public static possibleDirections getOpposite(possibleDirections direction) {
-            possibleDirections opposite = null;
-            if (direction != null) {
-                switch (direction) {
-                    case NORTH:
-                        opposite = SOUTH;
-                        break;
-                    case EAST:
-                        opposite = WEST;
-                        break;
-                    case SOUTH:
-                        opposite = NORTH;
-                        break;
-                    case WEST:
-                        opposite = EAST;
-                        break;
-                }
-            }
-
-            return opposite;
-        }
-    }
 }

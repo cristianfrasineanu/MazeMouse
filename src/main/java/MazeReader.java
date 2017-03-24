@@ -45,7 +45,6 @@ public class MazeReader {
 
             Cell[][] cellNetwork = this.buildCellNetwork();
             Maze maze = new MazeImpl(cellNetwork, entryCoordinates, exitCoordinates);
-            maze.moveMouseToEntry();
 
             return maze;
         } catch (FileNotFoundException ex) {

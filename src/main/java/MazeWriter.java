@@ -22,7 +22,7 @@ public class MazeWriter {
     }
 
     public void writeList() {
-        // TODO: Write not just one maze. Contribution anyone?
+        // TODO: Write not just one maze.
     }
 
     public void writeMaze(Maze maze, boolean append) {
@@ -31,12 +31,13 @@ public class MazeWriter {
 
         try {
             this.bufferedWriter = new BufferedWriter(new FileWriter(filePath, append));
-
             this.writeCoordinates(entryCoordinates);
             this.writeCoordinates(exitCoordinates);
             this.writeNumberOfExits(maze);
+
+            LOG.log(Level.INFO, "Wrote a maze to: {0}", filePath);
         } catch (IOException ex) {
-            LOG.log(Level.SEVERE, "Error writing to file: {0}", filePath);
+            LOG.log(Level.SEVERE, "Error writing to: {0}", filePath);
         } finally {
             try {
                 this.bufferedWriter.close();
@@ -61,7 +62,7 @@ public class MazeWriter {
         try {
             for (int i = 0; i < maze.getDimension(); i++) {
                 for (int j = 0; j < maze.getDimension(); j++) {
-                    this.bufferedWriter.write(String.valueOf(maze.getCell(new Coords(i, j)).getNumberOfExits()));
+                    this.bufferedWriter.write(String.valueOf(maze.getCell(new Coords(i, j)).isTraversable() ? 1 : 0));
                 }
                 this.bufferedWriter.newLine();
             }
