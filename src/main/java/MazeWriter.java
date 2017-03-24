@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,8 +32,8 @@ public class MazeWriter {
         }
     }
 
-    public void writeList() {
-        // TODO: Write not just one maze.
+    public void writeList(List<Maze> mazes) {
+        // TODO: Write a list of mazes.
     }
 
     public void writeMaze(Maze maze, boolean append) {
@@ -43,7 +44,8 @@ public class MazeWriter {
             this.bufferedWriter = new BufferedWriter(new FileWriter(filePath, append));
             this.writeCoordinates(entryCoordinates);
             this.writeCoordinates(exitCoordinates);
-            this.writeNumberOfExits(maze);
+            this.writeDimension(maze);
+            this.writeCells(maze);
 
             LOG.log(Level.INFO, "Wrote a maze to: {0}", filePath);
         } catch (IOException ex) {
@@ -59,20 +61,27 @@ public class MazeWriter {
 
     private void writeCoordinates(Coords coordinates) {
         try {
-            this.bufferedWriter.write(String.valueOf(coordinates.x));
-            this.bufferedWriter.newLine();
-            this.bufferedWriter.write(String.valueOf(coordinates.y));
+            this.bufferedWriter.write(coordinates.x + " " + coordinates.y);
             this.bufferedWriter.newLine();
         } catch (IOException ex) {
             LOG.log(Level.SEVERE, "Error writing the coordinates to: {0}", filePath);
         }
     }
 
-    private void writeNumberOfExits(Maze maze) {
+    private void writeDimension(Maze maze) {
+        try {
+            this.bufferedWriter.write(String.valueOf(maze.getDimension()));
+            this.bufferedWriter.newLine();
+        } catch (IOException ex) {
+            LOG.log(Level.SEVERE, "Error writing the maze dimension to: {0}", filePath);
+        }
+    }
+
+    private void writeCells(Maze maze) {
         try {
             for (int i = 0; i < maze.getDimension(); i++) {
                 for (int j = 0; j < maze.getDimension(); j++) {
-                    this.bufferedWriter.write(String.valueOf(maze.getCell(new Coords(i, j)).isTraversable() ? 1 : 0));
+                    this.bufferedWriter.write((maze.getCell(new Coords(i, j)).isTraversable() ? 1 : 0) + " ");
                 }
                 this.bufferedWriter.newLine();
             }

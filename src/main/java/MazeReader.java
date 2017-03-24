@@ -4,9 +4,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,7 +19,7 @@ public class MazeReader {
     private final String filePath;
     private static final String RSC_PATH = "src/main/resources/";
     private static final Logger LOG = Logger.getLogger(MazeReader.class.getName());
-    private BufferedReader bufferedReader;
+    private Scanner mazeScanner;
 
     public MazeReader(String fileName) {
         this.filePath = MazeReader.RSC_PATH + fileName;
@@ -31,14 +31,14 @@ public class MazeReader {
     }
 
     public List<Maze> readAll() {
-        // TODO: Just implement it.
+        // TODO: Read until the end of the file and return a corresponding collection.
 
         return Collections.emptyList();
     }
 
     public Maze readFirstMaze() {
         try {
-            this.bufferedReader = new BufferedReader(new FileReader(filePath));
+            this.mazeScanner = new Scanner(new BufferedReader(new FileReader(filePath))).useDelimiter("\\s");
 
             Coords entryCoordinates = new Coords(), exitCoordinates = new Coords();
             this.setEntryAndExitCoordinates(entryCoordinates, exitCoordinates);
@@ -50,51 +50,35 @@ public class MazeReader {
         } catch (FileNotFoundException ex) {
             LOG.log(Level.SEVERE, "Couldn't open the file {0}", filePath);
         } finally {
-            try {
-                this.bufferedReader.close();
-            } catch (IOException ex) {
-                LOG.log(Level.SEVERE, "Couldn't close the reading stream.");
-            }
+            this.mazeScanner.close();
         }
 
         return null;
     }
 
     private void setEntryAndExitCoordinates(Coords entryCoordinates, Coords exitCoordinates) {
-        try {
-            entryCoordinates.x = Integer.parseInt(this.bufferedReader.readLine());
-            entryCoordinates.y = Integer.parseInt(this.bufferedReader.readLine());
-            exitCoordinates.x = Integer.parseInt(this.bufferedReader.readLine());
-            exitCoordinates.y = Integer.parseInt(this.bufferedReader.readLine());
-        } catch (IOException ex) {
-            LOG.log(Level.SEVERE, "Couldn't read the coordinates.");
-        }
+        entryCoordinates.x = this.mazeScanner.nextInt();
+        entryCoordinates.y = this.mazeScanner.nextInt();
+        exitCoordinates.x = this.mazeScanner.nextInt();
+        exitCoordinates.y = this.mazeScanner.nextInt();
     }
 
     private Cell[][] buildCellNetwork() {
-        try {
-            int dimension, currentX = 0, currentY = 0, numberOfExits;
-            boolean traversable;
+        int dimension, currentX = 0, currentY = 0;
+        boolean traversable;
 
-            String lineBuffer = this.bufferedReader.readLine();
-            dimension = lineBuffer.length();
-            Cell[][] cellNetwork = new Cell[dimension][dimension];
-            while (currentX < dimension) {
-                while (currentY < dimension) {
-                    numberOfExits = Character.getNumericValue(lineBuffer.charAt(currentY));
-                    traversable = numberOfExits != 0;
-                    cellNetwork[currentX][currentY++] = new Cell(traversable);
-                }
-                lineBuffer = this.bufferedReader.readLine();
-                currentY = 0;
-                ++currentX;
+        dimension = this.mazeScanner.nextInt();
+        Cell[][] cellNetwork = new Cell[dimension][dimension];
+        while (currentX < dimension && this.mazeScanner.hasNextLine()) {
+            while (currentY < dimension) {
+                traversable = (this.mazeScanner.nextInt() == 1);
+                cellNetwork[currentX][currentY++] = new Cell(traversable);
             }
-
-            return cellNetwork;
-        } catch (IOException ex) {
-            LOG.log(Level.SEVERE, "Couldn't read the number of exits.");
+            currentY = 0;
+            ++currentX;
+            this.mazeScanner.nextLine();
         }
 
-        return null;
+        return cellNetwork;
     }
 }
