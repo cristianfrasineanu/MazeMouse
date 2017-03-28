@@ -1,9 +1,5 @@
 package main.java;
 
-/**
- *
- * @author cristianfrasineanu
- */
 public class Coords {
 
     int x;

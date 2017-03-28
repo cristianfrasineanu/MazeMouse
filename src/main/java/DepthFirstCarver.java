@@ -5,18 +5,38 @@ import java.util.Collections;
 
 class DepthFirstCarver implements MazeAlgorithm {
 
-    private final Cell[][] cellNetwork;
     private final Direction[] possibleDirections;
-    private final Coords currentCoordinates;
-    private final Coords exitCoordinates;
+
+    private Coords currentCoordinates;
+    private Coords exitCoordinates;
+    private Cell[][] cellNetwork;
 
     public DepthFirstCarver(Cell[][] cellNetwork, Coords entryCoordinates, Coords exitCoordinates) {
-        this.cellNetwork = cellNetwork;
-        this.possibleDirections = new Direction[4];
-        System.arraycopy(Direction.values(), 0, this.possibleDirections, 0, 4);
+        this();
 
+        this.cellNetwork = cellNetwork;
         this.currentCoordinates = new Coords(entryCoordinates.x, entryCoordinates.y);
         this.exitCoordinates = exitCoordinates;
+    }
+
+    public DepthFirstCarver() {
+        this.possibleDirections = new Direction[4];
+        System.arraycopy(Direction.values(), 0, this.possibleDirections, 0, 4);
+    }
+
+    @Override
+    public void setCurrentCoordinates(Coords currentCoordinates) {
+        this.currentCoordinates = new Coords(currentCoordinates.x, currentCoordinates.y);
+    }
+
+    @Override
+    public void setExitCoordinates(Coords exitCoordinates) {
+        this.exitCoordinates = new Coords(exitCoordinates.x, exitCoordinates.y);
+    }
+
+    @Override
+    public void setCellNetwork(Cell[][] cellNetwork) {
+        this.cellNetwork = cellNetwork;
     }
 
     @Override
@@ -62,10 +82,16 @@ class DepthFirstCarver implements MazeAlgorithm {
     }
 
     private boolean checkIfFeasible(Coords cell) {
-        if (cell.x == 0 || cell.x == this.cellNetwork.length - 1 || cell.y == 0 || cell.y == this.cellNetwork.length - 1) {
+        if (this.checkIfOnMargin(cell)) {
             return false;
         }
 
+        int traversableNeighbours = countTraversableNeighbours(cell);
+
+        return traversableNeighbours <= 1;
+    }
+
+    private int countTraversableNeighbours(Coords cell) {
         int countTraversableNeighbours = 0;
         for (Direction direction : this.possibleDirections) {
             Coords newCell = this.moveToDirection(cell, direction);
@@ -75,7 +101,11 @@ class DepthFirstCarver implements MazeAlgorithm {
             }
         }
 
-        return countTraversableNeighbours <= 1;
+        return countTraversableNeighbours;
+    }
+
+    private boolean checkIfOnMargin(Coords cell) {
+        return cell.x == 0 || cell.x == this.cellNetwork.length - 1 || cell.y == 0 || cell.y == this.cellNetwork.length - 1;
     }
 
     private Coords moveToDirection(Coords cell, Direction direction) {

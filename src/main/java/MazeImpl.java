@@ -5,8 +5,6 @@ import java.util.Objects;
 /**
  * A maze is a collection of cells that are interconnected and contains at least
  * a possible path for exit.
- *
- * @author cristianfrasineanu
  */
 public class MazeImpl implements Maze {
 

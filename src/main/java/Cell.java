@@ -3,8 +3,6 @@ package main.java;
 /**
  * The cell through which our traverser will pass each time through the maze. It
  * can be whether a free cell or an occupied one (acting as a wall).
- *
- * @author cristianfrasineanu
  */
 public class Cell {
 

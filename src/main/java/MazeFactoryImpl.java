@@ -4,10 +4,7 @@ import java.util.Random;
 
 /**
  * We make use of a carver that implements MazeAlgorithm in order to model the
- * actual maze cell structure for a maze having a path. All you have to do is to
- * provide an implementation for go().
- *
- * @author cristianfrasineanu
+ * actual structure for a maze to have a path.
  */
 public class MazeFactoryImpl implements MazeFactory {
 
@@ -20,16 +17,22 @@ public class MazeFactoryImpl implements MazeFactory {
     }
 
     @Override
-    public Maze createMazeWithPath() {
-        MazeAlgorithm carver = new DepthFirstCarver(cellNetwork, entryCoordinates, exitCoordinates);
+    public Maze createMazeUsingAlgorithm(MazeAlgorithm carver) {
+        this.passCellNetworkToCarver(carver);
         carver.go();
         this.setNumberOfExitsForAllCells();
-
+        
         Maze maze = new MazeImpl(cellNetwork, entryCoordinates, exitCoordinates);
 
         return maze;
     }
 
+    private void passCellNetworkToCarver(MazeAlgorithm carver) {
+        carver.setCellNetwork(cellNetwork);
+        carver.setCurrentCoordinates(entryCoordinates);
+        carver.setExitCoordinates(exitCoordinates);
+    }
+    
     @Override
     public Maze createTestMazeNoWalls() {
         this.fillNetworkNoWalls();
@@ -47,7 +50,6 @@ public class MazeFactoryImpl implements MazeFactory {
 
         this.generateRandomEntryAndExit(randomNetworkDimension);
         this.setEntryAndExitCell();
-
         this.fillNetworkBorder();
     }
 
@@ -61,7 +63,8 @@ public class MazeFactoryImpl implements MazeFactory {
             this.entryCoordinates.y = randomGenerator.nextInt(dimension - 3) + 1;
         }
 
-        // We subjectively chose to have the entry and the exit on different sides.
+        // We subjectively or compulsively chose to have the entry and the exit on different sides.
+        // In real life there's seldom a case where we have the entry and the exit on the same side.
         this.exitCoordinates.x = randomGenerator.nextInt(dimension - 1);
         if (this.exitCoordinates.x != 0 && this.exitCoordinates.x != dimension - 1) {
             this.exitCoordinates.y = (this.entryCoordinates.y == 0) ? dimension - 1 : 0;
@@ -98,12 +101,13 @@ public class MazeFactoryImpl implements MazeFactory {
             }
         }
     }
-
+    
+    // TODO: Move the logic at the solver level.
     private void setNumberOfExitsForAllCells() {
         for (int line = 1; line < cellNetwork.length - 1; line++) {
             for (int column = 1; column < cellNetwork[line].length - 1; column++) {
                 if (cellNetwork[line][column].isTraversable()) {
-                    cellNetwork[line][column].setNumberOfExits(this.getNumberOfExits(line, column));
+                    cellNetwork[line][column].setNumberOfExits(this.getNumberExitsForCell(line, column));
                 } else {
                     cellNetwork[line][column].setNumberOfExits(0);
                 }
@@ -111,7 +115,7 @@ public class MazeFactoryImpl implements MazeFactory {
         }
     }
 
-    private int getNumberOfExits(int lineIndex, int columnIndex) {
+    private int getNumberExitsForCell(int lineIndex, int columnIndex) {
         return ((cellNetwork[lineIndex + 1][columnIndex].isTraversable() ? 1 : 0)
                 + (cellNetwork[lineIndex - 1][columnIndex].isTraversable() ? 1 : 0)
                 + (cellNetwork[lineIndex][columnIndex - 1].isTraversable() ? 1 : 0)

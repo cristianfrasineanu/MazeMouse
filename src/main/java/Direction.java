@@ -1,9 +1,5 @@
 package main.java;
 
-/**
- *
- * @author cristianfrasineanu
- */
 public enum Direction {
     NORTH, EAST, SOUTH, WEST;
 
