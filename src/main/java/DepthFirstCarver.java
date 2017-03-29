@@ -5,42 +5,35 @@ import java.util.Collections;
 
 class DepthFirstCarver implements MazeAlgorithm {
 
-    private final Direction[] possibleDirections;
+    private Direction[] possibleDirections;
+    private final Coords currentCoordinates;
+    private final Coords exitCoordinates;
+    private final Cell[][] cellNetwork;
 
-    private Coords currentCoordinates;
-    private Coords exitCoordinates;
-    private Cell[][] cellNetwork;
+    public DepthFirstCarver() {
+        this.currentCoordinates = this.exitCoordinates = null;
+        this.cellNetwork = null;
+    }
 
     public DepthFirstCarver(Cell[][] cellNetwork, Coords entryCoordinates, Coords exitCoordinates) {
-        this();
+        this.generatePossibleDirections();
 
         this.cellNetwork = cellNetwork;
         this.currentCoordinates = new Coords(entryCoordinates.x, entryCoordinates.y);
         this.exitCoordinates = exitCoordinates;
     }
 
-    public DepthFirstCarver() {
+    private void generatePossibleDirections() {
         this.possibleDirections = new Direction[4];
         System.arraycopy(Direction.values(), 0, this.possibleDirections, 0, 4);
     }
 
     @Override
-    public void setCurrentCoordinates(Coords currentCoordinates) {
-        this.currentCoordinates = new Coords(currentCoordinates.x, currentCoordinates.y);
-    }
-
-    @Override
-    public void setExitCoordinates(Coords exitCoordinates) {
-        this.exitCoordinates = new Coords(exitCoordinates.x, exitCoordinates.y);
-    }
-
-    @Override
-    public void setCellNetwork(Cell[][] cellNetwork) {
-        this.cellNetwork = cellNetwork;
-    }
-
-    @Override
     public void go() {
+        if (this.cellNetwork == null) {
+            throw new RuntimeException("Cannot carve with an empty network!");
+        }
+
         this.departFromMargin();
         this.fillWithWalls();
         this.cellNetwork[this.currentCoordinates.x][this.currentCoordinates.y] = new Cell(true);
@@ -87,7 +80,6 @@ class DepthFirstCarver implements MazeAlgorithm {
         }
 
         int traversableNeighbours = countTraversableNeighbours(cell);
-
         return traversableNeighbours <= 1;
     }
 
@@ -105,7 +97,10 @@ class DepthFirstCarver implements MazeAlgorithm {
     }
 
     private boolean checkIfOnMargin(Coords cell) {
-        return cell.x == 0 || cell.x == this.cellNetwork.length - 1 || cell.y == 0 || cell.y == this.cellNetwork.length - 1;
+        return cell.x == 0 
+                || cell.x == this.cellNetwork.length - 1 
+                || cell.y == 0 
+                || cell.y == this.cellNetwork.length - 1;
     }
 
     private Coords moveToDirection(Coords cell, Direction direction) {

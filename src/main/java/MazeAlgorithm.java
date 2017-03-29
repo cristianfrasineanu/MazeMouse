@@ -7,10 +7,4 @@ package main.java;
 public interface MazeAlgorithm {
 
     public void go();
-
-    void setCellNetwork(Cell[][] cellNetwork);
-
-    void setCurrentCoordinates(Coords currentCoordinates);
-
-    void setExitCoordinates(Coords exitCoordinates);
 }

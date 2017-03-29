@@ -14,13 +14,14 @@ public class MazeImpl implements Maze {
     private final Cell[][] cellNetwork;
     private final Coords entryCoordinates;
     private final Coords exitCoordinates;
-    private final Coords currentCoordinates;
+    private Coords currentCoordinates;
 
     public MazeImpl(Cell[][] cellNetwork, Coords entryCoordinates, Coords exitCoordinates) {
         this.cellNetwork = cellNetwork;
+        
         this.entryCoordinates = entryCoordinates;
         this.exitCoordinates = exitCoordinates;
-        this.currentCoordinates = entryCoordinates;
+        this.currentCoordinates = new Coords(entryCoordinates.x, entryCoordinates.y);
     }
 
     @Override
@@ -44,6 +45,16 @@ public class MazeImpl implements Maze {
     }
 
     @Override
+    public Coords getCurrentCoordinates() {
+        return currentCoordinates;
+    }
+
+    @Override
+    public void setCurrentCoordinates(Coords currentCoordinates) {
+        this.currentCoordinates = currentCoordinates;
+    }
+    
+    @Override
     public String toString() {
         StringBuilder stringMaze = new StringBuilder();
 
@@ -65,7 +76,7 @@ public class MazeImpl implements Maze {
 
         for (Cell[] networkLine : cellNetwork) {
             for (Cell cell : networkLine) {
-                stringMaze.append(cell.getNumberOfExits()).append(" ");
+                stringMaze.append(cell.getNumberOfExits() == -1 ? "X" : cell.getNumberOfExits()).append(" ");
             }
             stringMaze.append(System.getProperty("line.separator"));
         }

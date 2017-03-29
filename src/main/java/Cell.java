@@ -10,7 +10,7 @@ public class Cell {
     public static String pathGlyph = Character.toString((char) 0x2504);
 
     private boolean isTraversable;
-    private int numberOfExits;
+    private int numberOfExits = -1;
 
     public Cell(boolean isTraversable) {
         this.isTraversable = isTraversable;
@@ -24,7 +24,7 @@ public class Cell {
         return isTraversable;
     }
 
-    public void passVia() {
+    public void pass() {
         --this.numberOfExits;
         checkIfStillTraversable();
     }

@@ -58,23 +58,7 @@ public class MazeImplTest {
         JTextArea textArea = new JTextArea(maze.toString(), maze.getDimension(), maze.getDimension());
         JOptionPane.showMessageDialog(null, textArea, "Maze visual representation", JOptionPane.INFORMATION_MESSAGE);
 
-        assertFalse(this.findUninitialisedCells(maze));
-    }
-
-    @Test
-    @Ignore
-    public void testMazeSolver() {
-        //
-    }
-
-    @Test
-    public void testReadWriteForOneMaze() {
-        Maze initialMaze = this.mazeFactory.createMazeUsingAlgorithm(new DepthFirstCarver());
-
-        this.mazeWriter.writeMaze(initialMaze, false);
-        Maze readMaze = this.mazeReader.readFirstMaze();
-
-        assertTrue(initialMaze.equals(readMaze));
+        assertFalse(findUninitialisedCells(maze));
     }
 
     private boolean findUninitialisedCells(Maze maze) {
@@ -88,5 +72,27 @@ public class MazeImplTest {
         }
 
         return foundUninitialised;
+    }
+
+    // This test would have the following logic: with each new carver we should also test the solver for
+    // that particular carver. We take into account the real situation where we cannot see it from above.
+    @Test
+    public void testDepthFirstSolver() {
+        Maze maze = this.mazeFactory.createMazeUsingAlgorithm(new DepthFirstCarver());
+
+        MazeAlgorithm dfSolver = new DepthFirstSolver(maze);
+        dfSolver.go();
+
+        assertTrue(maze.getCurrentCoordinates().equals(maze.getExitCoordinates()));
+    }
+
+    @Test
+    public void testReadWriteForOneMaze() {
+        Maze initialMaze = this.mazeFactory.createMazeUsingAlgorithm(new DepthFirstCarver());
+
+        this.mazeWriter.writeMaze(initialMaze, false);
+        Maze readMaze = this.mazeReader.readFirstMaze();
+
+        assertTrue(initialMaze.equals(readMaze));
     }
 }

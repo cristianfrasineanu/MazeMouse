@@ -13,4 +13,8 @@ public interface Maze {
     public Coords getExitCoordinates();
     
     public String showExits();
+
+    Coords getCurrentCoordinates();
+
+    void setCurrentCoordinates(Coords currentCoordinates);
 }
