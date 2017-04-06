@@ -13,54 +13,31 @@ import java.util.logging.Logger;
  */
 public class MazeFactoryImpl implements MazeFactory {
 
-    private final Coords entryCoordinates = new Coords();
-    private final Coords exitCoordinates = new Coords();
+    private Coords entryCoordinates = new Coords();
+    private Coords exitCoordinates = new Coords();
     private Cell[][] cellNetwork;
 
     public MazeFactoryImpl() {
-        this.generateRandomNetworkSkeleton();
+        int randomDimension = new Random().nextInt(MazeImpl.MAX_DIMENSION - MazeImpl.MIN_DIMENSION) + MazeImpl.MIN_DIMENSION;
+        this.generateRandomEntryAndExit(randomDimension);
+        
+        this.generateNetworkSkeleton(randomDimension);
     }
-
-    private void generateRandomNetworkSkeleton() {
-        Random randomGenerator = new Random();
-        int randomNetworkDimension = randomGenerator.nextInt(MazeImpl.MAX_DIMENSION - MazeImpl.MIN_DIMENSION) + MazeImpl.MIN_DIMENSION;
-        this.cellNetwork = new Cell[randomNetworkDimension][randomNetworkDimension];
-
-        this.generateRandomEntryAndExit(randomNetworkDimension);
+    
+    public MazeFactoryImpl(int customDimension, Coords entryCoordinates, Coords exitCoordinates) {
+        this.entryCoordinates = entryCoordinates;
+        this.exitCoordinates = exitCoordinates;
+        
+        this.generateNetworkSkeleton(customDimension);
+    }
+    
+    private void generateNetworkSkeleton(int dimension) {
+        this.cellNetwork = new Cell[dimension][dimension];
+        
         this.enableEntryAndExit();
         this.fillNetworkBorder();
     }
-
-    @Override
-    public Maze createMazeUsingAlgorithm(MazeAlgorithm carver) {
-        carver = reinstantiateCarverWithParams(carver);
-        carver.go();
-
-        Maze maze = new MazeImpl(cellNetwork, entryCoordinates, exitCoordinates);
-
-        return maze;
-    }
-
-    private MazeAlgorithm reinstantiateCarverWithParams(MazeAlgorithm carver) {
-        try {
-            Constructor carverConstructor = carver.getClass().getConstructor(Cell[][].class, Coords.class, Coords.class);
-            carver = (MazeAlgorithm) carverConstructor.newInstance(this.cellNetwork, entryCoordinates, exitCoordinates);
-        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-            Logger.getLogger(MazeFactoryImpl.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return carver;
-    }
-
-    @Override
-    public Maze createTestMazeNoWalls() {
-        this.fillNetworkNoWalls();
-
-        Maze maze = new MazeImpl(cellNetwork, entryCoordinates, exitCoordinates);
-        maze.getCell(entryCoordinates).setNumberOfExits(1);
-        maze.getCell(exitCoordinates).setNumberOfExits(1);
-
-        return maze;
-    }
+    
 
     private void generateRandomEntryAndExit(int dimension) {
         Random randomGenerator = new Random();
@@ -101,10 +78,41 @@ public class MazeFactoryImpl implements MazeFactory {
         }
     }
 
+    @Override
+    public Maze createMazeUsingAlgorithm(MazeAlgorithm carver) {
+        carver = reinstantiateCarverWithParams(carver);
+        carver.go();
+
+        Maze maze = new MazeImpl(this.cellNetwork, this.entryCoordinates, this.exitCoordinates);
+
+        return maze;
+    }
+
+    private MazeAlgorithm reinstantiateCarverWithParams(MazeAlgorithm carver) {
+        try {
+            Constructor carverConstructor = carver.getClass().getConstructor(Cell[][].class, Coords.class, Coords.class);
+            carver = (MazeAlgorithm) carverConstructor.newInstance(this.cellNetwork, this.entryCoordinates, this.exitCoordinates);
+        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+            Logger.getLogger(MazeFactoryImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return carver;
+    }
+
+    @Override
+    public Maze createTestMazeNoWalls() {
+        this.fillNetworkNoWalls();
+
+        Maze maze = new MazeImpl(this.cellNetwork, this.entryCoordinates, this.exitCoordinates);
+        maze.getCell(this.entryCoordinates).setNumberOfExits(1);
+        maze.getCell(this.exitCoordinates).setNumberOfExits(1);
+
+        return maze;
+    }
+
     private void fillNetworkNoWalls() {
-        for (int line = 1; line < cellNetwork.length - 1; line++) {
-            for (int column = 1; column < cellNetwork[line].length - 1; column++) {
-                cellNetwork[line][column] = new Cell(true);
+        for (int line = 1; line < this.cellNetwork.length - 1; line++) {
+            for (int column = 1; column < this.cellNetwork[line].length - 1; column++) {
+                this.cellNetwork[line][column] = new Cell(true);
             }
         }
     }

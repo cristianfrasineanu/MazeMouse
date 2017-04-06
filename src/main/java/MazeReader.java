@@ -60,21 +60,35 @@ public class MazeReader {
     }
 
     private Cell[][] buildCellNetwork() {
-        int dimension, currentX = 0, currentY = 0;
-        boolean traversable;
-
+        int dimension;
         dimension = this.mazeScanner.nextInt();
         Cell[][] cellNetwork = new Cell[dimension][dimension];
+        
+        readLines(cellNetwork);
+
+        return cellNetwork;
+    }
+
+    private void readLines(Cell[][] cellNetwork) {
+        int currentX = 0;
+        int dimension = cellNetwork.length;
+        
         while (currentX < dimension && this.mazeScanner.hasNextLine()) {
-            while (currentY < dimension) {
-                traversable = (this.mazeScanner.nextInt() == 1);
-                cellNetwork[currentX][currentY++] = new Cell(traversable);
-            }
-            currentY = 0;
+            readColumns(cellNetwork, currentX);
+            
             ++currentX;
             this.mazeScanner.nextLine();
         }
+    }
 
-        return cellNetwork;
+    private void readColumns(Cell[][] cellNetwork, int currentX) {
+        boolean traversable;
+        int currentY = 0;
+        int dimension = cellNetwork.length;
+        
+        while (currentY < dimension) {
+            traversable = (this.mazeScanner.next().equals(String.valueOf('0')));
+            cellNetwork[currentX][currentY++] = new Cell(traversable);
+        }
     }
 }

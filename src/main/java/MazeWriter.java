@@ -77,7 +77,7 @@ public class MazeWriter {
         try {
             for (int i = 0; i < maze.getDimension(); i++) {
                 for (int j = 0; j < maze.getDimension(); j++) {
-                    this.bufferedWriter.write((maze.getCell(new Coords(i, j)).isTraversable() ? 1 : 0) + " ");
+                    this.bufferedWriter.write((maze.getCell(new Coords(i, j)).isTraversable() ? 0 : "X") + " ");
                 }
                 this.bufferedWriter.newLine();
             }

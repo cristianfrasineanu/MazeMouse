@@ -64,7 +64,9 @@ public class MazeImpl implements Maze {
             }
             stringMaze.append(System.getProperty("line.separator"));
         }
+        // Avoid having an unnecessary carriage-return when displayig the maze.
         stringMaze.delete(stringMaze.length() - 1, stringMaze.length());
+        
         stringMaze.replace(this.getTotalOffset() + Cell.wallGlyph.length() - 1, this.getTotalOffset() + Cell.wallGlyph.length(), Character.toString((char) 0x2606));
 
         return stringMaze.toString();

@@ -8,12 +8,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.Ignore;
 
 // TODO: Move all the config-related info into a rsc file.
 public class MazeImplTest {
 
-    private static final String TEST_FILE = "testIO.txt";
+    private static final String TEST_FILE_NAME = "testIO.txt";
     MazeFactory mazeFactory;
     MazeReader mazeReader;
     MazeWriter mazeWriter;
@@ -31,9 +30,9 @@ public class MazeImplTest {
 
     @Before
     public void setUp() {
-        this.mazeFactory = new MazeFactoryImpl();
-        this.mazeWriter = new MazeWriter(MazeImplTest.TEST_FILE);
-        this.mazeReader = new MazeReader(MazeImplTest.TEST_FILE);
+        this.mazeFactory = new MazeFactoryImpl(20, new Coords(0, 4), new Coords(4, 0));
+        this.mazeWriter = new MazeWriter(MazeImplTest.TEST_FILE_NAME);
+        this.mazeReader = new MazeReader(MazeImplTest.TEST_FILE_NAME);
     }
 
     @After
@@ -55,10 +54,14 @@ public class MazeImplTest {
     public void testMazeGenerationWithDepthFirst() {
         Maze maze = this.mazeFactory.createMazeUsingAlgorithm(new DepthFirstCarver());
 
+        displayMazeVisually(maze);
+
+        assertFalse(this.findUninitialisedCells(maze));
+    }
+
+    private void displayMazeVisually(Maze maze) {
         JTextArea textArea = new JTextArea(maze.toString(), maze.getDimension(), maze.getDimension());
         JOptionPane.showMessageDialog(null, textArea, "Maze visual representation", JOptionPane.INFORMATION_MESSAGE);
-
-        assertFalse(findUninitialisedCells(maze));
     }
 
     private boolean findUninitialisedCells(Maze maze) {
@@ -74,8 +77,8 @@ public class MazeImplTest {
         return foundUninitialised;
     }
 
-    // This test would have the following logic: with each new carver we should also test the solver for
-    // that particular carver. We take into account the real situation where we cannot see it from above.
+    // The solver should take into account that the maze cannot be seen from above, and the 
+    // traverser will firstly have to "learn" the maze and then persist the most efficient path.
     @Test
     public void testDepthFirstSolver() {
         Maze maze = this.mazeFactory.createMazeUsingAlgorithm(new DepthFirstCarver());
